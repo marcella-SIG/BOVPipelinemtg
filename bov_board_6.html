@@ -1,0 +1,1152 @@
+<title>BOV Follow-Up Board</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --paper:#FAF9F7;
+  --surface:#FFFFFF;
+  --surface-2:#F3F1EE;
+  --ink:#2B2825;
+  --ink-soft:#726C63;
+  --ink-faint:#A39C90;
+  --line:#E6E2DA;
+  --accent:#C1604A;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#F3E2DC;
+  --accent2:#5C7A93;
+  --accent2-soft:#E6EDF1;
+  --gold:#B07F2E;
+  --gold-soft:#F2E8D4;
+  --critical:#B14D40;
+  --critical-soft:#F3E0DC;
+  --warn:#B07F2E;
+  --warn-soft:#F2E8D4;
+  --good:#4C7F5C;
+  --good-soft:#E1EBE3;
+  --dead:#8B8479;
+  --dead-soft:#EFEDE8;
+  --shadow: 0 1px 3px rgba(40,30,20,0.07);
+  --shadow-lift: 0 8px 24px rgba(40,30,20,0.16);
+
+  --s-flag:#B14D40;      --s-flag-soft:#F5DAD3;
+  --s-assign:#BD7333;    --s-assign-soft:#F6E3CC;
+  --s-progress:#B39429;  --s-progress-soft:#F6EDC7;
+  --s-complete:#4C7F5C;  --s-complete-soft:#DCEEE1;
+  --s-listed:#2E6B47;    --s-listed-soft:#D3E8DA;
+  --s-dead:#7C3A30;      --s-dead-soft:#EAD6D2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1C1A18; --surface:#252220; --surface-2:#2C2925;
+    --ink:#EDE9E3; --ink-soft:#B3ABA0; --ink-faint:#847C71;
+    --line:#3A3631;
+    --accent:#D9825F; --accent-ink:#241611; --accent-soft:#3A2A20;
+    --accent2:#7FA0B8; --accent2-soft:#20323D;
+    --gold:#D3A94F; --gold-soft:#3A3018;
+    --critical:#D07A68; --critical-soft:#3C241F;
+    --warn:#D3A94F; --warn-soft:#3A3018;
+    --good:#7CB08D; --good-soft:#1F3226;
+    --dead:#A39C90; --dead-soft:#2E2B27;
+    --shadow: 0 1px 3px rgba(0,0,0,0.35); --shadow-lift: 0 10px 28px rgba(0,0,0,0.55);
+
+    --s-flag:#D98A78;      --s-flag-soft:#40241E;
+    --s-assign:#DDA467;    --s-assign-soft:#3E2E18;
+    --s-progress:#D9C176;  --s-progress-soft:#3C3620;
+    --s-complete:#82BB93;  --s-complete-soft:#20362A;
+    --s-listed:#6BB98A;    --s-listed-soft:#193A28;
+    --s-dead:#C48B82;      --s-dead-soft:#3C2620;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1C1A18; --surface:#252220; --surface-2:#2C2925;
+  --ink:#EDE9E3; --ink-soft:#B3ABA0; --ink-faint:#847C71;
+  --line:#3A3631;
+  --accent:#D9825F; --accent-ink:#241611; --accent-soft:#3A2A20;
+  --accent2:#7FA0B8; --accent2-soft:#20323D;
+  --gold:#D3A94F; --gold-soft:#3A3018;
+  --critical:#D07A68; --critical-soft:#3C241F;
+  --warn:#D3A94F; --warn-soft:#3A3018;
+  --good:#7CB08D; --good-soft:#1F3226;
+  --dead:#A39C90; --dead-soft:#2E2B27;
+  --shadow: 0 1px 3px rgba(0,0,0,0.35); --shadow-lift: 0 10px 28px rgba(0,0,0,0.55);
+
+  --s-flag:#D98A78;      --s-flag-soft:#40241E;
+  --s-assign:#DDA467;    --s-assign-soft:#3E2E18;
+  --s-progress:#D9C176;  --s-progress-soft:#3C3620;
+  --s-complete:#82BB93;  --s-complete-soft:#20362A;
+  --s-listed:#6BB98A;    --s-listed-soft:#193A28;
+  --s-dead:#C48B82;      --s-dead-soft:#3C2620;
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+button, select, input, textarea{ font-family:inherit; }
+:focus-visible{ outline:2px solid var(--accent2); outline-offset:2px; }
+
+.shell{ max-width:1320px; margin:0 auto; padding:26px 20px 70px; position:relative; }
+
+/* ---- header ---- */
+header.top{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.eyebrow{
+  font-size:11.5px; letter-spacing:0.07em; text-transform:uppercase;
+  color:var(--ink-soft); font-weight:600; margin:0 0 6px; display:flex; align-items:center; gap:7px;
+}
+h1{
+  font-weight:700; font-size:clamp(22px,3.2vw,28px);
+  margin:0; letter-spacing:-0.01em; text-wrap:balance; color:var(--ink);
+}
+.sub{ color:var(--ink-soft); font-size:13.5px; margin:6px 0 0; max-width:56ch; }
+
+.dot{ width:7px; height:7px; border-radius:50%; background:currentColor; display:inline-block; flex:0 0 auto; }
+
+.mode-badge{
+  font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.mode-badge.live{ background:var(--good-soft); color:var(--good); }
+.mode-badge.local{ background:var(--warn-soft); color:var(--warn); }
+
+.top-actions{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.btn-row{ display:flex; gap:8px; }
+.btn{
+  font-size:13px; font-weight:600; border-radius:8px; padding:8px 13px;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer;
+  transition:box-shadow .12s ease, border-color .12s ease;
+}
+.btn:hover{ box-shadow:var(--shadow); border-color:var(--ink-faint); }
+.btn.primary{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.btn.small{ padding:5px 10px; font-size:12px; border-radius:7px; }
+.save-note{ font-size:11.5px; color:var(--ink-faint); }
+
+.banner{
+  font-size:13px; padding:10px 14px; border-radius:9px; margin-bottom:18px;
+  background:var(--warn-soft); color:var(--warn); font-weight:500; display:none;
+}
+.banner.show{ display:block; }
+.banner b{ font-weight:700; }
+
+/* ---- section shells ---- */
+.section{ margin-bottom:26px; }
+.section-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.section-head h2{ font-weight:700; font-size:16px; margin:0; color:var(--ink); }
+.section-head .hd-actions{ display:flex; gap:8px; align-items:center; }
+.panel{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow); }
+.panel.compact{ max-width:760px; padding:12px 14px; }
+.hint{ color:var(--ink-soft); font-size:12.5px; margin:0 0 12px; }
+.table-wrap{ overflow-x:auto; overflow-y:auto; max-height:560px; }
+
+.seg{ display:inline-flex; border:1px solid var(--line); border-radius:8px; padding:2px; background:var(--surface-2); }
+.seg button{
+  border:none; background:transparent; padding:6px 13px; font-size:12.5px; font-weight:600; border-radius:6px;
+  color:var(--ink-soft); cursor:pointer;
+}
+.seg button.active{ background:var(--surface); color:var(--accent); box-shadow:var(--shadow); }
+
+/* ---- person cell (JR / SR pairing) ---- */
+.person{ display:flex; align-items:center; gap:7px; }
+.p-role{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); line-height:1.3; }
+.p-name{ font-size:12.5px; font-weight:600; color:var(--ink); line-height:1.3; }
+.who-row{ display:flex; gap:16px; align-items:center; margin-bottom:9px; flex-wrap:wrap; }
+
+/* ---- board (kanban) ---- */
+.board{
+  display:grid; grid-template-columns:repeat(6,minmax(190px,1fr)); gap:14px;
+  align-items:start; overflow-x:auto; padding-bottom:10px;
+}
+.board[hidden]{ display:none; }
+.column{ border-radius:10px; padding:12px; min-height:140px; border:1px solid var(--line); border-top:3px solid var(--line); }
+.column.dragover{ outline:2px dashed var(--accent); outline-offset:-2px; }
+
+.col-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding:2px 2px; }
+.col-head .title{ display:flex; align-items:center; gap:7px; }
+.col-head h3{ font-size:12.5px; font-weight:700; margin:0; }
+.count-badge{
+  font-size:11px; font-weight:600;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink-soft); border-radius:999px; padding:1px 8px;
+}
+.col-add{
+  background:var(--surface); border:1px solid var(--line); color:var(--ink-soft); cursor:pointer;
+  font-size:16px; line-height:1; width:24px; height:24px; border-radius:6px; font-weight:600; flex:0 0 auto;
+}
+.col-add:hover{ color:var(--accent); border-color:var(--accent); }
+
+.cards{ display:flex; flex-direction:column; gap:10px; min-height:44px; max-height:540px; overflow-y:auto; padding-right:2px; }
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:12px 13px;
+  cursor:grab; box-shadow:var(--shadow); position:relative;
+}
+.card:active{ cursor:grabbing; }
+.card.dragging{ opacity:0.4; }
+.card .row1{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+.card .bov-name{ font-weight:700; font-size:14px; line-height:1.3; text-wrap:balance; }
+.icon-btn{
+  background:var(--surface-2); border:1px solid var(--line); cursor:pointer; color:var(--ink-soft);
+  padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; flex:0 0 auto;
+}
+.icon-btn:hover{ color:var(--accent); border-color:var(--accent); }
+.issue-pills{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+.issue-pill{ font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:999px; background:var(--critical-soft); color:var(--critical); }
+.card .action{ font-size:12.5px; color:var(--ink); margin-bottom:7px; line-height:1.4; }
+.card .action b{ color:var(--ink-soft); font-weight:700; font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; display:block; margin-bottom:2px; }
+.card .log-line{ font-size:11.5px; color:var(--ink-faint); font-style:italic; margin-bottom:8px; }
+.card .foot{ display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+.due-chip{
+  font-size:11px; font-weight:600; padding:2px 8px; border-radius:999px;
+  background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--line);
+}
+.status-select{
+  font-size:11.5px; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+  border-radius:7px; padding:3px 6px; font-weight:600;
+}
+.empty-col{ color:var(--ink-faint); font-size:12.5px; text-align:center; padding:20px 6px; }
+
+/* ---- deal table view ---- */
+.deal-table{ width:100%; border-collapse:separate; border-spacing:0; min-width:860px; }
+.deal-table th{
+  text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint);
+  font-weight:700; padding:0 10px 9px; border-bottom:1px solid var(--line); cursor:pointer; white-space:nowrap;
+  position:sticky; top:0; background:var(--surface); z-index:1;
+}
+.deal-table th:hover{ color:var(--accent); }
+.deal-table th.sorted::after{ content:" \25BE"; }
+.deal-table td{ padding:10px; border-bottom:1px solid var(--line); vertical-align:top; font-size:13px; }
+.deal-table tr:last-child td{ border-bottom:none; }
+.dt-name{ font-weight:700; }
+.dt-last{ color:var(--ink-soft); font-style:italic; font-size:12px; max-width:200px; }
+.avatar{
+  width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; color:#fff; flex:0 0 auto;
+}
+.agent-cell{ display:flex; align-items:center; gap:7px; font-weight:600; }
+.empty-state{ color:var(--ink-faint); font-size:13px; padding:20px; text-align:center; }
+
+/* ---- proposal:listing ratio boxes ---- */
+.ratio-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+.ratio-card{ border:1px solid var(--line); border-radius:9px; padding:12px 14px; background:var(--surface); box-shadow:var(--shadow); }
+.rc-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; font-weight:700; font-size:13.5px; }
+.ratio-row{ display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:var(--ink-soft); margin-bottom:6px; }
+.ratio-row .val{ font-weight:600; color:var(--ink); font-family:'IBM Plex Mono',monospace; font-size:12.5px; }
+.ratio-row input{ width:100%; max-width:110px; padding:4px 7px; border-radius:6px; border:1px solid var(--line); background:var(--surface-2); font-size:12px; text-align:right; color:var(--ink); }
+.trend-row{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px solid var(--line); }
+.trend-label{ font-size:11.5px; color:var(--ink-faint); }
+.trend-btn{ border:none; background:var(--surface-2); border-radius:7px; padding:4px 12px; font-size:13px; font-weight:700; cursor:default; }
+.trend-btn.editable{ cursor:pointer; }
+.trend-btn.up{ color:var(--good); }
+.trend-btn.down{ color:var(--critical); }
+.trend-btn.flat{ color:var(--ink-faint); }
+
+.lock-btn{ font-size:12px; font-weight:600; padding:6px 13px; border-radius:999px; border:1px solid var(--line); background:var(--surface); cursor:pointer; }
+.lock-btn.unlocked{ background:var(--good-soft); border-color:transparent; color:var(--good); }
+.locked-note{ color:var(--ink-faint); font-size:12px; padding:6px 0 2px; }
+
+/* ---- team roster ---- */
+.roster-rows{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+.roster-row{ display:flex; align-items:center; gap:10px; padding:8px 10px; background:var(--surface-2); border-radius:8px; border:1px solid var(--line); font-size:12.5px; flex-wrap:wrap; }
+.roster-row select{ padding:4px 8px; border-radius:6px; border:1px solid var(--line); background:var(--surface); font-size:12px; }
+.roster-arrow{ color:var(--ink-faint); font-size:11.5px; }
+.sr-chip-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.roster-label{ font-size:10px; font-weight:700; text-transform:uppercase; color:var(--ink-faint); margin-right:4px; }
+.sr-chip{ font-size:12px; font-weight:600; background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:3px 10px; display:inline-flex; align-items:center; gap:6px; }
+.sr-chip button{ border:none; background:none; color:var(--ink-faint); cursor:pointer; font-size:13px; line-height:1; padding:0; }
+.sr-chip button:hover{ color:var(--critical); }
+.roster-add{ display:flex; gap:8px; align-items:end; margin-top:10px; flex-wrap:wrap; }
+.roster-add label{ display:block; font-size:10px; font-weight:700; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px; }
+.roster-add input, .roster-add select{ padding:6px 8px; border-radius:6px; border:1px solid var(--line); background:var(--surface); font-size:12.5px; }
+
+/* ---- modal ---- */
+.overlay{ position:fixed; inset:0; background:rgba(30,25,20,0.45); display:flex; align-items:center; justify-content:center; padding:20px; z-index:60; }
+.overlay[hidden]{ display:none; }
+.modal{ background:var(--surface); border-radius:12px; border:1px solid var(--line); width:100%; max-width:440px; padding:22px; box-shadow:var(--shadow-lift); max-height:90vh; overflow-y:auto; }
+.modal h2{ font-weight:700; font-size:17px; margin:0 0 14px; }
+.field{ margin-bottom:12px; }
+.field label{ display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); margin-bottom:5px; }
+.field input, .field select, .field textarea{
+  width:100%; padding:8px 10px; border-radius:7px; border:1px solid var(--line); background:var(--surface-2);
+  color:var(--ink); font-size:14px;
+}
+.field textarea{ resize:vertical; min-height:48px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.check-row{ display:flex; gap:14px; flex-wrap:wrap; }
+.check-item{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; }
+.check-item input{ width:auto; }
+.log-list{ max-height:110px; overflow-y:auto; border:1px solid var(--line); border-radius:8px; padding:8px 10px; background:var(--surface-2); margin-bottom:8px; font-size:12px; }
+.log-list .entry{ margin-bottom:6px; }
+.log-list .entry .d{ color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; font-size:10.5px; }
+.log-empty{ color:var(--ink-faint); font-size:12px; }
+.modal-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:16px; }
+.modal-actions .right{ display:flex; gap:8px; }
+.danger-link{ background:none; border:none; color:var(--critical); font-size:12.5px; font-weight:600; cursor:pointer; padding:6px 4px; }
+
+.toast{
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--ink); color:var(--paper); padding:9px 16px; border-radius:999px; font-size:13px; font-weight:600;
+  box-shadow:var(--shadow-lift); opacity:0; transition:opacity .2s ease, transform .2s ease; z-index:90; pointer-events:none;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+@media (max-width: 900px){
+  .board{ grid-template-columns:repeat(6,78vw); }
+}
+</style>
+
+<div class="shell">
+  <header class="top">
+    <div>
+      <p class="eyebrow"><span id="modeDot" class="dot" style="background:var(--accent2)"></span>SR / JR Pipeline Follow-Up</p>
+      <h1>BOV Follow-Up Board</h1>
+      <p class="sub">Track the deals that need a follow-up, who owns the next step, and where everyone stands on pace.</p>
+    </div>
+    <div class="top-actions">
+      <span class="mode-badge local" id="modeBadge"><span class="dot"></span>Local session</span>
+      <div class="btn-row">
+        <button class="btn" id="loadBtn">Load backup</button>
+        <button class="btn primary" id="saveBtn">Save</button>
+      </div>
+      <span class="save-note" id="saveNote">not saved yet</span>
+    </div>
+  </header>
+
+  <div class="banner" id="localBanner">Working in a local session: your changes live in this browser tab only. Click <b>Save</b> any time to download a backup file &mdash; use <b>Load backup</b> to pick it back up next time (reopening this page starts blank otherwise).</div>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Deal Follow-Up</h2>
+      <div class="hd-actions">
+        <div class="seg" id="viewToggle">
+          <button data-view="table" class="active">Table</button>
+          <button data-view="board">Board</button>
+          <button data-view="combined">Combined</button>
+        </div>
+        <button class="btn primary small" id="addBtn">+ Flag a BOV</button>
+      </div>
+    </div>
+
+    <div id="tableView"></div>
+    <section class="board" id="board" hidden></section>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Proposal to Listing Ratio</h2>
+      <div class="hd-actions">
+        <button class="lock-btn" id="lockBtnRatio">Edit</button>
+      </div>
+    </div>
+    <div class="panel">
+      <p class="hint">Entered manually per JR &mdash; ratio, potential fees if listed, and whether it's trending up or down. Click Edit to make changes.</p>
+      <div class="ratio-grid" id="ratioGrid"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Team Roster</h2>
+      <div class="hd-actions">
+        <button class="lock-btn" id="lockBtnRoster">Edit</button>
+        <button class="btn small" id="rosterToggleBtn">Show roster &#9656;</button>
+      </div>
+    </div>
+    <div class="panel compact" id="rosterPanel" hidden>
+      <p class="hint">Add a new hire, reassign a JR to a different SR, or remove someone who's left. Click Edit to make changes.</p>
+      <div id="rosterList"></div>
+    </div>
+  </section>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="modal">
+    <h2 id="modalTitle">Flag a BOV</h2>
+    <form id="bovForm">
+      <div class="field">
+        <label for="f-name">BOV / deal name</label>
+        <input id="f-name" required placeholder="e.g. 456 Oak Ave">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-jr">JR</label>
+          <select id="f-jr"></select>
+        </div>
+        <div class="field">
+          <label for="f-sr">SR</label>
+          <select id="f-sr"></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>What's missing</label>
+        <div class="check-row">
+          <label class="check-item"><input type="checkbox" id="f-noRank"> No rank</label>
+          <label class="check-item"><input type="checkbox" id="f-noLink"> No link/doc</label>
+          <label class="check-item"><input type="checkbox" id="f-noNotes"> No forecast note</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-action">Action item</label>
+        <textarea id="f-action" placeholder="What needs to happen, and who's doing it"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-due">Due date</label>
+          <input id="f-due" type="date">
+        </div>
+        <div class="field">
+          <label for="f-stage">Stage</label>
+          <select id="f-stage">
+            <option value="flagged">Flagged</option>
+            <option value="assigned">Action Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="listed">Listed</option>
+            <option value="dead">Dead</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Follow-up log</label>
+        <div class="log-list" id="logList"></div>
+        <div class="field-row" style="grid-template-columns:1fr auto;">
+          <input id="f-newlog" placeholder="Add a quick update...">
+          <button type="button" class="btn small" id="addLogBtn">Add</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="danger-link" id="deleteBtn" hidden>Delete</button>
+        <div class="right">
+          <button type="button" class="btn" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn primary">Save card</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept="application/json" hidden>
+
+<script>
+(function(){
+  "use strict";
+
+  var STAGE_COLUMNS = [
+    {key:"flagged", label:"Flagged", color:"var(--s-flag)", soft:"var(--s-flag-soft)"},
+    {key:"assigned", label:"Action Assigned", color:"var(--s-assign)", soft:"var(--s-assign-soft)"},
+    {key:"in_progress", label:"In Progress", color:"var(--s-progress)", soft:"var(--s-progress-soft)"},
+    {key:"completed", label:"Completed", color:"var(--s-complete)", soft:"var(--s-complete-soft)"},
+    {key:"listed", label:"Listed", color:"var(--s-listed)", soft:"var(--s-listed-soft)"},
+    {key:"dead", label:"Dead", color:"var(--s-dead)", soft:"var(--s-dead-soft)"}
+  ];
+
+  var jrSrMap = {
+    "Hunter":"Stratton", "Patrick":"Seth", "Jack":"Schuh", "Kristen":"Gage",
+    "Jeremy":"Yossi", "Nate":"John", "Hayden":"Michael", "Chris":"Michael",
+    "Cam":"Schuh", "Jason":"Marsh"
+  };
+  var srList = ["Stratton","Marsh","Seth","Schuh","Jordan","Gage","Yossi","John","Michael"];
+  function jrList(){ return Object.keys(jrSrMap); }
+
+  var PASSCODE = "2022";
+  var AVATAR_COLORS = ["#C1604A","#5C7A93","#B07F2E","#7D8A6A","#9B6B8E","#4C7F5C","#8A6E52","#6E7B8B","#B5776B","#6E7F5C"];
+
+  function avatarColor(name){
+    var h = 0;
+    for(var i=0;i<(name||"").length;i++) h = (h*31 + name.charCodeAt(i)) % AVATAR_COLORS.length;
+    return AVATAR_COLORS[Math.abs(h)];
+  }
+  function initials(name){ return (name||"?").trim().slice(0,2).toUpperCase(); }
+  function esc(s){
+    var d = document.createElement("div");
+    d.textContent = s == null ? "" : String(s);
+    return d.innerHTML;
+  }
+  function personBlock(role, name){
+    if(!name) return "";
+    return '<div class="person"><span class="avatar" style="background:'+avatarColor(name)+'">'+initials(name)+'</span>' +
+      '<div><div class="p-role">'+esc(role)+'</div><div class="p-name">'+esc(name)+'</div></div></div>';
+  }
+
+  /* ---------- date helpers ---------- */
+  function parseISO(s){
+    if(!s) return null;
+    var p = s.split("-");
+    if(p.length !== 3) return null;
+    return new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+  }
+  function fmtShort(d){ return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+
+  /* ---------- state ---------- */
+  var db = null, dealsCol = null, liveMode = false;
+  var deals = [];
+  var ratioData = {};   // { agentName: {ratio, fees, trend} }
+  var adminUnlocked = false;
+  var rosterPanelOpen = false;
+  var currentView = "table";
+  var sortField = "due", sortDir = "asc";
+  var editingId = null, dirty = false;
+  var currentLog = [];
+
+  var overlay = document.getElementById("overlay");
+  var form = document.getElementById("bovForm");
+  var localBanner = document.getElementById("localBanner");
+  var modeBadge = document.getElementById("modeBadge");
+  var modeDot = document.getElementById("modeDot");
+  var saveNote = document.getElementById("saveNote");
+  var toastEl = document.getElementById("toast");
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+  }
+  function markDirty(){ dirty = true; saveNote.textContent = "unsaved changes"; }
+
+  function render(){
+    renderDealsSection();
+    renderRatioGrid();
+    renderRoster();
+  }
+
+  /* ========================================================
+     SECTION 1 — Deal Follow-Up (table + board + combined views)
+     ======================================================== */
+  function migrateStages(arr){
+    (arr||[]).forEach(function(b){
+      if(b.stage === "following_up") b.stage = "in_progress";
+      if(b.stage === "closed"){ b.stage = (b.outcome === "moved_forward") ? "listed" : "dead"; }
+      delete b.outcome;
+    });
+  }
+
+  function fmtDue(b){
+    if(!b.dueDate) return "No due date";
+    var due = parseISO(b.dueDate);
+    var today = new Date(); today.setHours(0,0,0,0);
+    var days = Math.round((due-today)/86400000);
+    var fmt = fmtShort(due);
+    if(b.stage === "listed" || b.stage === "dead") return fmt;
+    if(days < 0) return Math.abs(days)+"d overdue";
+    if(days === 0) return "Due today";
+    return "Due in "+days+"d";
+  }
+  function lastUpdateText(b){
+    var log = b.log || [];
+    if(log.length === 0) return "No updates yet";
+    var e = log[log.length-1];
+    return e.date + " — " + e.text;
+  }
+  function stageLabel(key){
+    var c = STAGE_COLUMNS.find(function(x){ return x.key === key; });
+    return c ? c.label : key;
+  }
+
+  function renderDealsSection(){
+    document.querySelectorAll("#viewToggle button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-view") === currentView);
+    });
+    var showTable = currentView === "table" || currentView === "combined";
+    var showBoard = currentView === "board" || currentView === "combined";
+    document.getElementById("tableView").hidden = !showTable;
+    document.getElementById("board").hidden = !showBoard;
+    if(showTable) renderTable();
+    if(showBoard) renderBoard();
+  }
+
+  function sortedDeals(){
+    var arr = deals.slice();
+    arr.sort(function(a,b){
+      var av, bv;
+      if(sortField === "due"){ av = a.dueDate || "9999"; bv = b.dueDate || "9999"; }
+      else if(sortField === "jr"){ av = a.jr||""; bv = b.jr||""; }
+      else if(sortField === "sr"){ av = a.sr||""; bv = b.sr||""; }
+      else if(sortField === "stage"){ av = a.stage||""; bv = b.stage||""; }
+      else { av = a.name||""; bv = b.name||""; }
+      if(av < bv) return sortDir === "asc" ? -1 : 1;
+      if(av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+    return arr;
+  }
+
+  function renderTable(){
+    var wrap = document.getElementById("tableView");
+    if(deals.length === 0){
+      wrap.innerHTML = '<div class="panel"><div class="empty-state">No BOVs flagged yet &mdash; click "+ Flag a BOV" to add one.</div></div>';
+      return;
+    }
+    var cols = [
+      {key:"name", label:"Deal"},
+      {key:"jr", label:"JR"},
+      {key:"sr", label:"SR"},
+      {key:"stage", label:"Status"},
+      {key:"due", label:"Due"}
+    ];
+    var head = cols.map(function(c){
+      return '<th data-sort="'+c.key+'" class="'+(sortField===c.key?"sorted":"")+'">'+c.label+'</th>';
+    }).join("") + "<th>Issues</th><th>Action item</th><th>Last update</th><th></th>";
+
+    var rows = sortedDeals().map(function(b){
+      var issues = [];
+      if(b.issues && b.issues.noRank) issues.push("No rank");
+      if(b.issues && b.issues.noLink) issues.push("No link");
+      if(b.issues && b.issues.noNotes) issues.push("No forecast note");
+      return '<tr>' +
+        '<td class="dt-name">'+esc(b.name||"Untitled")+'</td>' +
+        '<td>'+personBlock("JR", b.jr)+'</td>' +
+        '<td>'+personBlock("SR", b.sr)+'</td>' +
+        '<td><select class="status-select" data-move="'+b.id+'">' +
+          STAGE_COLUMNS.map(function(c){ return '<option value="'+c.key+'"'+((b.stage||"flagged")===c.key?' selected':'')+'>'+stageLabel(c.key)+'</option>'; }).join("") +
+        '</select></td>' +
+        '<td class="mono">'+fmtDue(b)+'</td>' +
+        '<td>'+issues.map(function(i){ return '<span class="issue-pill">'+i+'</span>'; }).join(" ")+'</td>' +
+        '<td style="max-width:220px;">'+esc(b.action||"")+'</td>' +
+        '<td class="dt-last">'+esc(lastUpdateText(b))+'</td>' +
+        '<td><button class="icon-btn" data-edit="'+b.id+'">Edit</button></td>' +
+      '</tr>';
+    }).join("");
+
+    wrap.innerHTML = '<div class="panel"><div class="table-wrap"><table class="deal-table"><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+
+    wrap.querySelectorAll("th[data-sort]").forEach(function(th){
+      th.addEventListener("click", function(){
+        var f = th.getAttribute("data-sort");
+        if(sortField === f) sortDir = sortDir === "asc" ? "desc" : "asc"; else { sortField = f; sortDir = "asc"; }
+        renderTable();
+      });
+    });
+    wrap.querySelectorAll("[data-move]").forEach(function(el){
+      el.addEventListener("change", function(){ moveDeal(el.getAttribute("data-move"), el.value); });
+    });
+    wrap.querySelectorAll("[data-edit]").forEach(function(el){
+      el.addEventListener("click", function(){ openModal(el.getAttribute("data-edit")); });
+    });
+  }
+
+  function renderBoard(){
+    var boardEl = document.getElementById("board");
+    var html = "";
+    STAGE_COLUMNS.forEach(function(c){
+      var items = deals.filter(function(b){ return (b.stage||"flagged") === c.key; });
+      html += '<div class="column" data-col="'+c.key+'" style="background:'+c.soft+';border-color:'+c.color+';border-top-color:'+c.color+'">' +
+        '<div class="col-head"><div class="title"><h3>'+c.label+'</h3><span class="count-badge">'+items.length+'</span></div>' +
+        '<button class="col-add" data-add="'+c.key+'" title="Flag a BOV">+</button></div>' +
+        '<div class="cards" data-dropzone="'+c.key+'">';
+      if(items.length === 0){ html += '<div class="empty-col">Nothing here</div>'; }
+      else { items.forEach(function(b){ html += cardHtml(b); }); }
+      html += '</div></div>';
+    });
+    boardEl.innerHTML = html;
+    wireBoardEvents();
+  }
+
+  function cardHtml(b){
+    var issues = [];
+    if(b.issues && b.issues.noRank) issues.push("No rank");
+    if(b.issues && b.issues.noLink) issues.push("No link");
+    if(b.issues && b.issues.noNotes) issues.push("No forecast note");
+    var pills = issues.map(function(i){ return '<span class="issue-pill">'+i+'</span>'; }).join("");
+    var log = b.log || [];
+    var lastLog = log.length ? log[log.length-1] : null;
+    return '<div class="card" draggable="true" data-id="'+b.id+'">' +
+      '<div class="row1"><div class="bov-name">'+esc(b.name||"Untitled BOV")+'</div>' +
+      '<button class="icon-btn" data-edit="'+b.id+'">Edit</button></div>' +
+      '<div class="who-row">' + personBlock("JR", b.jr) + personBlock("SR", b.sr) + '</div>' +
+      (pills ? '<div class="issue-pills">'+pills+'</div>' : '') +
+      (b.action ? '<div class="action"><b>Action item</b>'+esc(b.action)+'</div>' : '') +
+      (lastLog ? '<div class="log-line">"'+esc(lastLog.text)+'"</div>' : '') +
+      '<div class="foot"><span class="due-chip">'+fmtDue(b)+'</span>' +
+      '<select class="status-select" data-move="'+b.id+'">' +
+        STAGE_COLUMNS.map(function(c){ return '<option value="'+c.key+'"'+((b.stage||"flagged")===c.key?' selected':'')+'>'+stageLabel(c.key)+'</option>'; }).join("") +
+      '</select></div>' +
+    '</div>';
+  }
+
+  function wireBoardEvents(){
+    var boardEl = document.getElementById("board");
+    boardEl.querySelectorAll("[data-edit]").forEach(function(el){
+      el.addEventListener("click", function(){ openModal(el.getAttribute("data-edit")); });
+    });
+    boardEl.querySelectorAll("[data-add]").forEach(function(el){
+      el.addEventListener("click", function(){ openModal(null, el.getAttribute("data-add")); });
+    });
+    boardEl.querySelectorAll("[data-move]").forEach(function(el){
+      el.addEventListener("change", function(){ moveDeal(el.getAttribute("data-move"), el.value); });
+    });
+    boardEl.querySelectorAll(".card").forEach(function(el){
+      el.addEventListener("dragstart", function(e){
+        el.classList.add("dragging");
+        e.dataTransfer.setData("text/plain", el.getAttribute("data-id"));
+        e.dataTransfer.effectAllowed = "move";
+      });
+      el.addEventListener("dragend", function(){ el.classList.remove("dragging"); });
+    });
+    boardEl.querySelectorAll(".column").forEach(function(el){
+      el.addEventListener("dragover", function(e){ e.preventDefault(); el.classList.add("dragover"); });
+      el.addEventListener("dragleave", function(){ el.classList.remove("dragover"); });
+      el.addEventListener("drop", function(e){
+        e.preventDefault(); el.classList.remove("dragover");
+        var id = e.dataTransfer.getData("text/plain");
+        var key = el.getAttribute("data-col");
+        if(id && key) moveDeal(id, key);
+      });
+    });
+  }
+
+  function moveDeal(id, stage){
+    var b = deals.find(function(x){ return x.id === id; });
+    if(!b) return;
+    var wasListed = b.stage === "listed";
+    b.stage = stage;
+    markDirty(); renderDealsSection(); persistDeal(b);
+    if(stage === "listed" && !wasListed) celebrate();
+  }
+
+  document.getElementById("viewToggle").addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-view]");
+    if(!btn) return;
+    currentView = btn.getAttribute("data-view");
+    renderDealsSection();
+  });
+
+  /* ---------- modal ---------- */
+  function openModal(id, presetStage){
+    editingId = id;
+    var b = id ? deals.find(function(x){ return x.id === id; }) : null;
+    document.getElementById("modalTitle").textContent = b ? "Edit BOV" : "Flag a BOV";
+
+    var jrSel = document.getElementById("f-jr"), srSel = document.getElementById("f-sr");
+    var jrs = jrList();
+    jrSel.innerHTML = jrs.map(function(n){ return '<option value="'+n+'">'+n+'</option>'; }).join("");
+    srSel.innerHTML = srList.map(function(n){ return '<option value="'+n+'">'+n+'</option>'; }).join("");
+
+    document.getElementById("f-name").value = b ? (b.name||"") : "";
+    jrSel.value = b ? (b.jr || jrs[0]) : jrs[0];
+    srSel.value = b ? (b.sr || jrSrMap[jrSel.value]) : jrSrMap[jrSel.value];
+    document.getElementById("f-noRank").checked = !!(b && b.issues && b.issues.noRank);
+    document.getElementById("f-noLink").checked = !!(b && b.issues && b.issues.noLink);
+    document.getElementById("f-noNotes").checked = !!(b && b.issues && b.issues.noNotes);
+    document.getElementById("f-action").value = b ? (b.action||"") : "";
+    document.getElementById("f-due").value = b ? (b.dueDate||"") : "";
+    document.getElementById("f-stage").value = b ? (b.stage||"flagged") : (presetStage || "flagged");
+    document.getElementById("deleteBtn").hidden = !b;
+    currentLog = b ? (b.log||[]).slice() : [];
+    renderLog();
+    overlay.hidden = false;
+    document.getElementById("f-name").focus();
+  }
+  document.getElementById("f-jr").addEventListener("change", function(){
+    if(jrSrMap[this.value]) document.getElementById("f-sr").value = jrSrMap[this.value];
+  });
+  function renderLog(){
+    var el = document.getElementById("logList");
+    if(currentLog.length === 0){ el.innerHTML = '<div class="log-empty">No updates yet</div>'; return; }
+    el.innerHTML = currentLog.map(function(e){ return '<div class="entry"><span class="d">'+esc(e.date)+'</span> &mdash; '+esc(e.text)+'</div>'; }).join("");
+    el.scrollTop = el.scrollHeight;
+  }
+  document.getElementById("addLogBtn").addEventListener("click", function(){
+    var inp = document.getElementById("f-newlog");
+    var text = inp.value.trim();
+    if(!text) return;
+    currentLog.push({date: fmtShort(new Date()), text: text});
+    inp.value = ""; renderLog();
+  });
+  function closeModal(){ overlay.hidden = true; editingId = null; form.reset(); currentLog = []; }
+  document.getElementById("addBtn").addEventListener("click", function(){ openModal(null); });
+  document.getElementById("cancelBtn").addEventListener("click", closeModal);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
+  document.getElementById("deleteBtn").addEventListener("click", function(){
+    if(!editingId) return;
+    var id = editingId;
+    deals = deals.filter(function(x){ return x.id !== id; });
+    markDirty(); renderDealsSection(); closeModal();
+    if(dealsCol) dealsCol.doc(id).delete().catch(function(){});
+  });
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var stage = document.getElementById("f-stage").value;
+    var data = {
+      name: document.getElementById("f-name").value.trim(),
+      jr: document.getElementById("f-jr").value,
+      sr: document.getElementById("f-sr").value,
+      issues: {
+        noRank: document.getElementById("f-noRank").checked,
+        noLink: document.getElementById("f-noLink").checked,
+        noNotes: document.getElementById("f-noNotes").checked
+      },
+      action: document.getElementById("f-action").value.trim(),
+      dueDate: document.getElementById("f-due").value,
+      stage: stage,
+      log: currentLog.slice(),
+      updatedAt: new Date().toISOString()
+    };
+    if(!data.name){ document.getElementById("f-name").focus(); return; }
+    var wasListed = false;
+    if(editingId){
+      var idx = deals.findIndex(function(x){ return x.id === editingId; });
+      var before = idx>-1 ? deals[idx] : null;
+      wasListed = stage === "listed" && !(before && before.stage === "listed");
+      if(idx > -1) deals[idx] = Object.assign({}, deals[idx], data);
+      markDirty(); renderDealsSection(); persistDeal(deals[idx]); closeModal();
+    } else {
+      data.createdAt = new Date().toISOString();
+      var newCard = Object.assign({id: "id-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)}, data);
+      deals.push(newCard);
+      wasListed = stage === "listed";
+      markDirty(); renderDealsSection(); closeModal();
+      persistDeal(newCard);
+    }
+    if(wasListed) celebrate();
+  });
+
+  /* ========================================================
+     SECTION 2 — Proposal to Listing Ratio (manual, per JR)
+     ======================================================== */
+  function ensureRatio(name){
+    if(!ratioData[name]) ratioData[name] = {ratio:"", fees:"", trend:"flat"};
+    return ratioData[name];
+  }
+
+  function renderRatioGrid(){
+    var el = document.getElementById("ratioGrid");
+    var names = jrList();
+    if(names.length === 0){
+      el.innerHTML = '<div class="empty-state">No JRs on the roster yet &mdash; add one in Team Roster below.</div>';
+      return;
+    }
+    el.innerHTML = names.map(function(name){
+      var r = ensureRatio(name);
+      var arrow = r.trend === "up" ? "&#9650;" : (r.trend === "down" ? "&#9660;" : "&ndash;");
+      var trendLabel = r.trend === "up" ? "Improving" : (r.trend === "down" ? "Declining" : "Steady");
+      return '<div class="ratio-card">' +
+        '<div class="rc-head"><span class="avatar" style="background:'+avatarColor(name)+'">'+initials(name)+'</span>'+esc(name)+'</div>' +
+        '<div class="ratio-row"><span>Proposal : Listing</span>' +
+          (adminUnlocked
+            ? '<input type="text" data-ratiofield="ratio" data-name="'+esc(name)+'" value="'+esc(r.ratio)+'" placeholder="e.g. 10:1">'
+            : '<span class="val">'+esc(r.ratio||"—")+'</span>') +
+        '</div>' +
+        '<div class="ratio-row"><span>Potential fees if listed</span>' +
+          (adminUnlocked
+            ? '<input type="text" data-ratiofield="fees" data-name="'+esc(name)+'" value="'+esc(r.fees)+'" placeholder="e.g. $100k">'
+            : '<span class="val">'+esc(r.fees||"—")+'</span>') +
+        '</div>' +
+        '<div class="trend-row"><span class="trend-label">'+trendLabel+'</span>' +
+          '<button class="trend-btn '+r.trend+' '+(adminUnlocked?"editable":"")+'" '+(adminUnlocked?'data-trendcycle="'+esc(name)+'"':'')+'>'+arrow+'</button>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+
+    if(adminUnlocked){
+      el.querySelectorAll("[data-ratiofield]").forEach(function(inp){
+        inp.addEventListener("change", function(){
+          var name = inp.getAttribute("data-name"), field = inp.getAttribute("data-ratiofield");
+          ensureRatio(name)[field] = inp.value;
+          markDirty(); if(liveMode) persistMeta();
+        });
+      });
+      el.querySelectorAll("[data-trendcycle]").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var name = btn.getAttribute("data-trendcycle");
+          var r = ensureRatio(name);
+          r.trend = r.trend === "up" ? "down" : (r.trend === "down" ? "flat" : "up");
+          markDirty(); if(liveMode) persistMeta();
+          renderRatioGrid();
+        });
+      });
+    }
+  }
+
+  /* ========================================================
+     SECTION 3 — Team Roster (add / reassign / remove, passcode-gated)
+     ======================================================== */
+  function renderRoster(){
+    var wrap = document.getElementById("rosterList");
+    var jrs = jrList();
+    var jrRows = jrs.map(function(name){
+      var srField = adminUnlocked
+        ? '<select data-jrsr="'+esc(name)+'">' + srList.map(function(s){ return '<option value="'+esc(s)+'"'+(jrSrMap[name]===s?" selected":"")+'>'+esc(s)+'</option>'; }).join("") + '</select>'
+        : '<span class="val">'+esc(jrSrMap[name]||"—")+'</span>';
+      return '<div class="roster-row">' +
+        '<div class="agent-cell"><span class="avatar" style="background:'+avatarColor(name)+'">'+initials(name)+'</span>'+esc(name)+'</div>' +
+        '<span class="roster-arrow">reports to</span>' +
+        srField +
+        (adminUnlocked ? '<button class="danger-link" data-rmjr="'+esc(name)+'">Remove</button>' : '') +
+      '</div>';
+    }).join("");
+
+    var srChips = srList.map(function(s){
+      return '<span class="sr-chip">'+esc(s)+ (adminUnlocked ? ' <button data-rmsr="'+esc(s)+'">&times;</button>' : '') +'</span>';
+    }).join("");
+
+    var addForms = "";
+    if(adminUnlocked){
+      addForms =
+        '<div class="roster-add">' +
+          '<div><label>New JR name</label><input id="new-jr-name" placeholder="Full name"></div>' +
+          '<div><label>Reports to (SR)</label><select id="new-jr-sr">'+srList.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+'</option>';}).join("")+'</select></div>' +
+          '<button class="btn primary small" id="add-jr-btn">Add JR</button>' +
+        '</div>' +
+        '<div class="roster-add">' +
+          '<div><label>New SR name</label><input id="new-sr-name" placeholder="Full name"></div>' +
+          '<button class="btn small" id="add-sr-btn">Add SR</button>' +
+        '</div>';
+    }
+
+    wrap.innerHTML =
+      '<div class="roster-rows">'+(jrRows || '<span class="hint" style="margin:0;">No JRs yet.</span>')+'</div>' +
+      '<div class="sr-chip-row"><span class="roster-label">SRs</span>'+srChips+'</div>' +
+      addForms;
+
+    if(!adminUnlocked) return;
+
+    wrap.querySelectorAll("[data-jrsr]").forEach(function(sel){
+      sel.addEventListener("change", function(){
+        jrSrMap[sel.getAttribute("data-jrsr")] = sel.value;
+        markDirty(); if(liveMode) persistMeta();
+        render();
+      });
+    });
+    wrap.querySelectorAll("[data-rmjr]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var name = btn.getAttribute("data-rmjr");
+        if(!window.confirm("Remove "+name+" from the roster? Their past deals and history stay intact, they just won't show up for new entries.")) return;
+        delete jrSrMap[name];
+        markDirty(); if(liveMode) persistMeta();
+        render();
+      });
+    });
+    wrap.querySelectorAll("[data-rmsr]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var name = btn.getAttribute("data-rmsr");
+        var stillAssigned = jrList().filter(function(n){ return jrSrMap[n] === name; });
+        if(stillAssigned.length){ toast(name+" is still assigned to "+stillAssigned.join(", ")+" — reassign them first"); return; }
+        srList = srList.filter(function(s){ return s !== name; });
+        markDirty(); if(liveMode) persistMeta();
+        render();
+      });
+    });
+    var addJrBtn = document.getElementById("add-jr-btn");
+    if(addJrBtn) addJrBtn.addEventListener("click", function(){
+      var name = document.getElementById("new-jr-name").value.trim();
+      var sr = document.getElementById("new-jr-sr").value;
+      if(!name){ toast("Enter a name first"); return; }
+      if(jrSrMap.hasOwnProperty(name)){ toast("That JR already exists"); return; }
+      jrSrMap[name] = sr;
+      markDirty(); if(liveMode) persistMeta();
+      render();
+      toast("Added " + name);
+    });
+    var addSrBtn = document.getElementById("add-sr-btn");
+    if(addSrBtn) addSrBtn.addEventListener("click", function(){
+      var name = document.getElementById("new-sr-name").value.trim();
+      if(!name){ toast("Enter a name first"); return; }
+      if(srList.indexOf(name) > -1){ toast("That SR already exists"); return; }
+      srList.push(name);
+      markDirty(); if(liveMode) persistMeta();
+      render();
+      toast("Added " + name);
+    });
+  }
+
+  document.getElementById("rosterToggleBtn").addEventListener("click", function(){
+    rosterPanelOpen = !rosterPanelOpen;
+    document.getElementById("rosterPanel").hidden = !rosterPanelOpen;
+    this.innerHTML = rosterPanelOpen ? "Hide roster &#9662;" : "Show roster &#9656;";
+  });
+
+  /* ---------- shared edit lock (gates ratio boxes + roster) ---------- */
+  function onLockClick(){
+    if(adminUnlocked){
+      adminUnlocked = false;
+      updateLockBtn();
+      render();
+      return;
+    }
+    var p = window.prompt("Enter the passcode to edit the ratio boxes and team roster:");
+    if(p === null) return;
+    if(p === PASSCODE){
+      adminUnlocked = true;
+      toast("Editing unlocked");
+      if(!rosterPanelOpen){
+        rosterPanelOpen = true;
+        document.getElementById("rosterPanel").hidden = false;
+        document.getElementById("rosterToggleBtn").innerHTML = "Hide roster &#9662;";
+      }
+    } else {
+      toast("Wrong passcode");
+    }
+    updateLockBtn();
+    render();
+  }
+  function updateLockBtn(){
+    document.querySelectorAll(".lock-btn").forEach(function(btn){
+      btn.className = "lock-btn" + (adminUnlocked ? " unlocked" : "");
+      btn.textContent = adminUnlocked ? "Done editing" : "Edit";
+    });
+  }
+  document.querySelectorAll(".lock-btn").forEach(function(btn){
+    btn.addEventListener("click", onLockClick);
+  });
+
+  /* ========================================================
+     Persistence — db (live) or local (save/load backup file)
+     ======================================================== */
+  function persistDeal(b){
+    if(!dealsCol || !b) return;
+    var copy = Object.assign({}, b); delete copy.id;
+    dealsCol.doc(b.id).set(copy).catch(function(){});
+  }
+  function persistMeta(){
+    if(!db) return;
+    db.doc("meta/weekly").set({jrSrMap: jrSrMap, srList: srList, ratioData: ratioData}).catch(function(){});
+  }
+
+  function setMode(isLive){
+    liveMode = isLive;
+    if(isLive){
+      modeBadge.className = "mode-badge live";
+      modeBadge.innerHTML = '<span class="dot"></span>Live synced';
+      modeDot.style.background = "var(--good)";
+      localBanner.classList.remove("show");
+      saveNote.textContent = "auto-saved to the cloud";
+      document.getElementById("saveBtn").textContent = "Export backup";
+    } else {
+      modeBadge.className = "mode-badge local";
+      modeBadge.innerHTML = '<span class="dot"></span>Local session';
+      modeDot.style.background = "var(--warn)";
+      localBanner.classList.add("show");
+    }
+  }
+
+  function downloadPlain(filename, jsonStr){
+    try{
+      var blob = new Blob([jsonStr], {type:"application/json"});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      return true;
+    } catch(err){ return false; }
+  }
+  function markSaved(){
+    dirty = false;
+    saveNote.textContent = "saved " + new Date().toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+  }
+  function backupPayload(){
+    return JSON.stringify({deals: deals, jrSrMap: jrSrMap, srList: srList, ratioData: ratioData, savedAt: new Date().toISOString()}, null, 2);
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    var stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,"-");
+    var filename = "bov-board-backup-" + stamp + ".json";
+    var jsonStr = backupPayload();
+
+    if(window.claude && window.claude.use){
+      window.claude.use("downloads").then(function(dl){
+        if(!dl){
+          if(downloadPlain(filename, jsonStr)){ markSaved(); toast(liveMode ? "Backup downloaded" : "Saved — backup downloaded"); }
+          else toast("Couldn't save here — try the standalone file version");
+          return;
+        }
+        dl.save({filename: filename, data: jsonStr}).then(function(){
+          markSaved();
+          toast(liveMode ? "Backup downloaded" : "Saved — backup downloaded");
+        }).catch(function(err){
+          if(err && err.code === "declined"){ toast("Save cancelled"); return; }
+          toast("Couldn't save — try again");
+        });
+      }).catch(function(){
+        if(downloadPlain(filename, jsonStr)){ markSaved(); toast("Saved — backup downloaded"); }
+        else toast("Couldn't download — try again");
+      });
+    } else {
+      if(downloadPlain(filename, jsonStr)){ markSaved(); toast("Saved — backup downloaded"); }
+      else toast("Couldn't download — try again");
+    }
+  });
+
+  document.getElementById("loadBtn").addEventListener("click", function(){ document.getElementById("fileInput").click(); });
+  document.getElementById("fileInput").addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var parsed = JSON.parse(reader.result);
+        if(Array.isArray(parsed.deals)) deals = parsed.deals;
+        else if(Array.isArray(parsed.bovs)) deals = parsed.bovs; // backward compat with older backups
+        migrateStages(deals);
+        if(parsed.jrSrMap) jrSrMap = parsed.jrSrMap;
+        if(parsed.srList) srList = parsed.srList;
+        if(parsed.ratioData) ratioData = parsed.ratioData;
+        markDirty(); render();
+        toast("Backup loaded");
+        if(liveMode){
+          deals.forEach(function(b){ persistDeal(b); });
+          persistMeta();
+        }
+      } catch(err){
+        toast("That file didn't look like a valid backup");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  window.addEventListener("beforeunload", function(e){
+    if(dirty && !liveMode){ e.preventDefault(); e.returnValue = ""; }
+  });
+
+  function celebrate(){
+    toast("Nice — listed!");
+  }
+
+  /* ---------- placeholder seed data (clearly example) ---------- */
+  function seedPlaceholders(){
+    deals.push({
+      id:"example-1", name:"123 Main St — example, delete me", jr:"Hunter", sr:"Stratton",
+      issues:{noRank:true, noLink:true, noNotes:false},
+      action:"Get Hunter to add a rank and link the proposal doc before Friday",
+      dueDate:"2026-09-10", stage:"flagged",
+      log:[{date:"Sep 3", text:"Flagged in weekly review"}],
+      createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()
+    });
+  }
+
+  updateLockBtn();
+  seedPlaceholders();
+  render();
+
+  if(window.claude && window.claude.use){
+    window.claude.use("db").then(function(d){
+      db = d;
+      if(!db){ setMode(false); return; }
+      setMode(true);
+      dealsCol = db.collection("deals");
+      dealsCol.onSnapshot(function(snap){
+        deals = snap.docs.map(function(doc){ return Object.assign({id: doc.id}, doc.data()); });
+        migrateStages(deals);
+        renderDealsSection();
+      }, function(){ setMode(false); });
+      db.doc("meta/weekly").onSnapshot(function(snap){
+        if(snap.exists && snap.data()){
+          var d2 = snap.data();
+          if(d2.jrSrMap) jrSrMap = d2.jrSrMap;
+          if(d2.srList) srList = d2.srList;
+          if(d2.ratioData) ratioData = d2.ratioData;
+          renderRatioGrid(); renderRoster();
+        }
+      }, function(){});
+    }).catch(function(){ setMode(false); });
+  } else {
+    setMode(false);
+  }
+})();
+</script>
